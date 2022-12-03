@@ -1,3 +1,4 @@
+set_host_options -max_cores 8
 set hdlin_translate_off_skip_text "TRUE"
 set edifout_netlist_only "TRUE"
 set verilogout_no_tri true

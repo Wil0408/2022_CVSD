@@ -28,13 +28,28 @@ module polar_decoder (
                 FINISH      = 7;
 
     // global
-    reg     [10:0]  cnt, cnt_nxt;
+    reg     [4:0]   cnt, cnt_nxt;
     reg     [3:0]   stage_cnt, stage_cnt_nxt;
     reg     [6:0]   cur_packet, cur_packet_nxt;
+    reg     [8:0]   stage_flag, stage_flag_nxt;
 
     // info
     reg     [9:0]   N;  // u9.0
     reg     [7:0]   K;  // u7.0
+
+    // computing
+    wire    signed  [21:0]  f_z_nxt[0:255];
+    wire                    f_msb[0:255];
+    wire            [20:0]  f_min[0:255];
+    wire            [20:0]  f_min_inv[0:255];
+    reg     signed  [21:0]  f_a[0:255], f_b[0:255];
+    wire            [20:0]  f_a_abs[0:255], f_b_abs[0:255];
+    // reg     signed  [21:0]  f_z[0:255];
+
+    wire    signed  [21:0]  g_z_nxt[0:255];
+    reg     signed  [21:0]  g_a[0:255], g_b[0:255];
+    // reg     signed  [21:0]  g_z[0:255];
+    reg                     g_u[0:255];
 
     integer i;
     
@@ -69,31 +84,13 @@ module polar_decoder (
                 state_nxt = (cnt == 31)? N512_DECODE: LOAD_LLR;
             end
         end
-        N128_DECODE: begin
-            if (cnt == 127 && stage_cnt == 6) begin
+        N128_DECODE, N256_DECODE, N512_DECODE: begin
+            if (stage_flag[8:0] == 9'b000000001) begin
                 state_nxt = (cur_packet == packet_num-1)? FINISH: LOAD_INFO;
                 cur_packet_nxt = cur_packet+1;
             end
             else begin
-                state_nxt = N128_DECODE;
-            end
-        end
-        N256_DECODE: begin
-            if (cnt == 255 && stage_cnt == 7) begin
-                state_nxt = (cur_packet == packet_num-1)? FINISH: LOAD_INFO;
-                cur_packet_nxt = cur_packet+1;
-            end
-            else begin
-                state_nxt = N256_DECODE;
-            end
-        end
-        N512_DECODE: begin
-            if (cnt == 511 && stage_cnt == 8) begin
-                state_nxt = (cur_packet == packet_num-1)? FINISH: LOAD_INFO;
-                cur_packet_nxt = cur_packet+1;
-            end
-            else begin
-                state_nxt = N512_DECODE;
+                state_nxt = state;
             end
         end
         FINISH: begin
@@ -143,15 +140,6 @@ module polar_decoder (
                 cnt_nxt = (cnt == 31)? 0: cnt+1;
             end
         end
-        N128_DECODE: begin
-            cnt_nxt = (stage_cnt == 6)? ((cnt == 127)? 0: cnt+1): cnt;
-        end
-        N256_DECODE: begin
-            cnt_nxt = (stage_cnt == 7)? ((cnt == 255)? 0: cnt+1): cnt;
-        end
-        N512_DECODE: begin
-            cnt_nxt = (stage_cnt == 8)? ((cnt == 511)? 0: cnt+1): cnt;
-        end
         FINISH: begin
             cnt_nxt = (cnt == 1)? 0: cnt+1;
         end
@@ -171,18 +159,134 @@ module polar_decoder (
     end
 
     // ========================================
+    // Stage flag
+    // ========================================
+
+    always @* begin
+        stage_flag_nxt = stage_flag;
+
+        if (state == N128_DECODE || state == N256_DECODE || state == N512_DECODE) begin
+            stage_flag_nxt[stage_cnt] = ~stage_flag[stage_cnt];
+        end
+    end
+
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            stage_flag <= 0;
+        end
+        else begin
+            stage_flag <= stage_flag_nxt;
+        end
+    end
+
+    // ========================================
     // Stage counter
     // ========================================
 
     always @* begin
         if (state == N128_DECODE) begin
-            stage_cnt_nxt = (stage_cnt == 6)? 0: stage_cnt+1;
+            if (stage_cnt == 0) begin
+                if (stage_flag[0] == 1'b0) begin
+                    stage_cnt_nxt = 0;
+                end
+                else if (stage_flag[1] == 1'b1) begin
+                    stage_cnt_nxt = 1;
+                end
+                else if (stage_flag[2] == 1'b1) begin
+                    stage_cnt_nxt = 2;
+                end
+                else if (stage_flag[3] == 1'b1) begin
+                    stage_cnt_nxt = 3;
+                end
+                else if (stage_flag[4] == 1'b1) begin
+                    stage_cnt_nxt = 4;
+                end
+                else if (stage_flag[5] == 1'b1) begin
+                    stage_cnt_nxt = 5;
+                end
+                else begin
+                    stage_cnt_nxt = 6;
+                end
+            end
+            else begin
+                stage_cnt_nxt = stage_cnt-1;
+            end
         end
         else if (state == N256_DECODE) begin
-            stage_cnt_nxt = (stage_cnt == 7)? 0: stage_cnt+1;
+            if (stage_cnt == 0) begin
+                if (stage_flag[0] == 1'b0) begin
+                    stage_cnt_nxt = 0;
+                end
+                else if (stage_flag[1] == 1'b1) begin
+                    stage_cnt_nxt = 1;
+                end
+                else if (stage_flag[2] == 1'b1) begin
+                    stage_cnt_nxt = 2;
+                end
+                else if (stage_flag[3] == 1'b1) begin
+                    stage_cnt_nxt = 3;
+                end
+                else if (stage_flag[4] == 1'b1) begin
+                    stage_cnt_nxt = 4;
+                end
+                else if (stage_flag[5] == 1'b1) begin
+                    stage_cnt_nxt = 5;
+                end
+                else if (stage_flag[6] == 1'b1) begin
+                    stage_cnt_nxt = 6;
+                end
+                else begin
+                    stage_cnt_nxt = 7;
+                end
+            end
+            else begin
+                stage_cnt_nxt = stage_cnt-1;
+            end
         end
         else if (state == N512_DECODE) begin
-            stage_cnt_nxt = (stage_cnt == 8)? 0: stage_cnt+1;
+            if (stage_cnt == 0) begin
+                if (stage_flag[0] == 1'b0) begin
+                    stage_cnt_nxt = 0;
+                end
+                else if (stage_flag[1] == 1'b1) begin
+                    stage_cnt_nxt = 1;
+                end
+                else if (stage_flag[2] == 1'b1) begin
+                    stage_cnt_nxt = 2;
+                end
+                else if (stage_flag[3] == 1'b1) begin
+                    stage_cnt_nxt = 3;
+                end
+                else if (stage_flag[4] == 1'b1) begin
+                    stage_cnt_nxt = 4;
+                end
+                else if (stage_flag[5] == 1'b1) begin
+                    stage_cnt_nxt = 5;
+                end
+                else if (stage_flag[6] == 1'b1) begin
+                    stage_cnt_nxt = 6;
+                end
+                else if (stage_flag[7] == 1'b1) begin
+                    stage_cnt_nxt = 7;
+                end
+                else begin
+                    stage_cnt_nxt = 8;
+                end
+            end
+            else begin
+                stage_cnt_nxt = stage_cnt-1;
+            end
+        end
+        else if (state == LOAD_LLR) begin
+            if (N[7]) begin
+                stage_cnt_nxt = 6;
+            end
+            else if (N[8]) begin
+                stage_cnt_nxt = 7;
+            end
+            else begin
+                stage_cnt_nxt = 8;
+            end
         end
         else begin
             stage_cnt_nxt = 0;
@@ -274,6 +378,7 @@ module polar_decoder (
     // ========================================
 
     reg     u   [0:511];
+    reg     u_0 [0:511];
     reg     u_1 [0:511];
     reg     u_2 [0:511];
     reg     u_3 [0:511];
@@ -282,79 +387,185 @@ module polar_decoder (
     reg     u_6 [0:511];
     reg     u_7 [0:511];
     reg     u_8 [0:511];
-    reg     u_9 [0:511];
 
     always @* begin
-        // stage1: use u_1[i-1]
+        // stage1: use u_0[i-1]
         for (i=0; i<512; i=i+1) begin
-            u_1[i] = u[i];
+            u_0[i] = u[i];
         end
 
-        // stage2: use u_2[i-2]
+        // stage2: use u_1[i-2]
         for (i=0; i<512; i=i+1) begin
-            if (i[0]) u_2[i] = u_1[i];
-            else      u_2[i] = u_1[i]^u_1[i+  1];
+            if (i[0]) u_1[i] = u_0[i];
+            else      u_1[i] = u_0[i]^u_0[i+  1];
         end
 
-        // stage3: use u_3[i-4]
+        // stage3: use u_2[i-4]
         for (i=0; i<512; i=i+1) begin
-            if (i[1]) u_3[i] = u_2[i];
-            else      u_3[i] = u_2[i]^u_2[i+  2];
+            if (i[1]) u_2[i] = u_1[i];
+            else      u_2[i] = u_1[i]^u_1[i+  2];
         end
 
-        // stage4: use u_4[i-8]
+        // stage4: use u_3[i-8]
         for (i=0; i<512; i=i+1) begin
-            if (i[2]) u_4[i] = u_3[i];
-            else      u_4[i] = u_3[i]^u_3[i+  4];
+            if (i[2]) u_3[i] = u_2[i];
+            else      u_3[i] = u_2[i]^u_2[i+  4];
         end
 
-        // stage5: use u_5[i-16]
+        // stage5: use u_4[i-16]
         for (i=0; i<512; i=i+1) begin
-            if (i[3]) u_5[i] = u_4[i];
-            else      u_5[i] = u_4[i]^u_4[i+  8];
+            if (i[3]) u_4[i] = u_3[i];
+            else      u_4[i] = u_3[i]^u_3[i+  8];
         end
 
-        // stage6: use u_6[i-32]
+        // stage6: use u_5[i-32]
         for (i=0; i<512; i=i+1) begin
-            if (i[4]) u_6[i] = u_5[i];
-            else      u_6[i] = u_5[i]^u_5[i+ 16];
+            if (i[4]) u_5[i] = u_4[i];
+            else      u_5[i] = u_4[i]^u_4[i+ 16];
         end
 
-        // stage7: use u_7[i-64]
+        // stage7: use u_6[i-64]
         for (i=0; i<512; i=i+1) begin
-            if (i[5]) u_7[i] = u_6[i];
-            else      u_7[i] = u_6[i]^u_6[i+ 32];
+            if (i[5]) u_6[i] = u_5[i];
+            else      u_6[i] = u_5[i]^u_5[i+ 32];
         end
 
-        // stage8: use u_8[i-128]
+        // stage8: use u_7[i-128]
         for (i=0; i<512; i=i+1) begin
-            if (i[6]) u_8[i] = u_7[i];
-            else      u_8[i] = u_7[i]^u_7[i+ 64];
+            if (i[6]) u_7[i] = u_6[i];
+            else      u_7[i] = u_6[i]^u_6[i+ 64];
         end
 
-        // stage9: use u_9[i-256]
+        // stage9: use u_8[i-256]
         for (i=0; i<512; i=i+1) begin
-            if (i[7]) u_9[i] = u_8[i];
-            else      u_9[i] = u_8[i]^u_8[i+128];
+            if (i[7]) u_8[i] = u_7[i];
+            else      u_8[i] = u_7[i]^u_7[i+128];
+        end
+    end
+
+    // ========================================
+    // stage buffer
+    // ========================================
+
+    reg signed    [12:0]  stage_buf_8[0:255];
+    reg signed    [13:0]  stage_buf_7[0:127];
+    reg signed    [14:0]  stage_buf_6[0:63];
+    reg signed    [15:0]  stage_buf_5[0:31];
+    reg signed    [16:0]  stage_buf_4[0:15];
+    reg signed    [17:0]  stage_buf_3[0:7];
+    reg signed    [18:0]  stage_buf_2[0:3];
+    reg signed    [19:0]  stage_buf_1[0:1];
+    // reg signed    [20:0]  stage_buf_0[0];
+
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            for (i=0; i<256; i=i+1) begin
+                stage_buf_8[i] <= 0;
+            end
+
+            for (i=0; i<128; i=i+1) begin
+                stage_buf_7[i] <= 0;
+            end
+
+            for (i=0; i<64; i=i+1) begin
+                stage_buf_6[i] <= 0;
+            end
+
+            for (i=0; i<32; i=i+1) begin
+                stage_buf_5[i] <= 0;
+            end
+
+            for (i=0; i<16; i=i+1) begin
+                stage_buf_4[i] <= 0;
+            end
+
+            for (i=0; i<8; i=i+1) begin
+                stage_buf_3[i] <= 0;
+            end
+
+            for (i=0; i<4; i=i+1) begin
+                stage_buf_2[i] <= 0;
+            end
+
+            for (i=0; i<2; i=i+1) begin
+                stage_buf_1[i] <= 0;
+            end
+
+            // for (i=0; i<1; i=i+1) begin
+            //     stage_buf_0[i] <= 0;
+            // end
+        end
+        else begin
+            if (state == N128_DECODE || state == N256_DECODE || state == N512_DECODE) begin
+                if (stage_cnt == 8) begin
+                    for (i=0; i<256; i=i+1) begin
+                        stage_buf_8[i] <= (stage_flag[8])? g_z_nxt[i]: f_z_nxt[i];
+                    end
+                end
+                else if (stage_cnt == 7) begin
+                    for (i=0; i<128; i=i+1) begin
+                        stage_buf_7[i] <= (stage_flag[7])? g_z_nxt[i]: f_z_nxt[i];
+                    end
+                end
+                else if (stage_cnt == 6) begin
+                    for (i=0; i<64; i=i+1) begin
+                        stage_buf_6[i] <= (stage_flag[6])? g_z_nxt[i]: f_z_nxt[i];
+                    end
+                end
+                else if (stage_cnt == 5) begin
+                    for (i=0; i<32; i=i+1) begin
+                        stage_buf_5[i] <= (stage_flag[5])? g_z_nxt[i]: f_z_nxt[i];
+                    end
+                end
+                else if (stage_cnt == 4) begin
+                    for (i=0; i<16; i=i+1) begin
+                        stage_buf_4[i] <= (stage_flag[4])? g_z_nxt[i]: f_z_nxt[i];
+                    end
+                end
+                else if (stage_cnt == 3) begin
+                    for (i=0; i<8; i=i+1) begin
+                        stage_buf_3[i] <= (stage_flag[3])? g_z_nxt[i]: f_z_nxt[i];
+                    end
+                end
+                else if (stage_cnt == 2) begin
+                    for (i=0; i<4; i=i+1) begin
+                        stage_buf_2[i] <= (stage_flag[2])? g_z_nxt[i]: f_z_nxt[i];
+                    end
+                end
+                else if (stage_cnt == 1) begin
+                    for (i=0; i<2; i=i+1) begin
+                        stage_buf_1[i] <= (stage_flag[1])? g_z_nxt[i]: f_z_nxt[i];
+                    end
+                end
+                // else if (stage_cnt == 0) begin
+                //     for (i=0; i<1; i=i+1) begin
+                //         stage_buf_0[i] <= (stage_flag[0])? g_z_nxt[i]: f_z_nxt[i];
+                //     end
+                //     end
+                // end
+            end
+            else if (state == LOAD_LLR) begin
+                if (N[7] == 1) begin
+                    for (i=0; i<128; i=i+1) begin
+                        if (cnt[2:0] == i[6:4]) begin
+                            stage_buf_7[i] <= $signed(rdata[(12*i[3:0])+:12]);
+                        end
+                    end
+                end
+                else if (N[8] == 1) begin
+                    for (i=0; i<256; i=i+1) begin
+                        if (cnt[3:0] == i[7:4]) begin
+                            stage_buf_8[i] <= $signed(rdata[(12*i[3:0])+:12]);
+                        end
+                    end
+                end
+            end
         end
     end
 
     // ========================================
     // LLR decoder (f)
     // ========================================
-
-    wire    signed  [21:0]  f_z_nxt[0:255];
-    wire                    f_msb[0:255];
-    wire            [20:0]  f_min[0:255];
-    wire            [20:0]  f_min_inv[0:255];
-    reg     signed  [21:0]  f_a[0:255], f_b[0:255];
-    wire            [20:0]  f_a_abs[0:255], f_b_abs[0:255];
-    reg     signed  [21:0]  f_z[0:255];
-
-    wire    signed  [21:0]  g_z_nxt[0:255];
-    reg     signed  [21:0]  g_a[0:255], g_b[0:255];
-    reg     signed  [21:0]  g_z[0:255];
-    reg                     g_u[0:255];
 
     generate
     genvar gen_i;
@@ -376,174 +587,58 @@ module polar_decoder (
             f_b[i] = 0;
         end
 
-
-        if (state == N128_DECODE) begin
-            for (i=0; i<64; i=i+1) begin
-                case(stage_cnt)
-                0: begin // 0-63
-                    f_a[i] = llr_data[i]   ;
-                    f_b[i] = llr_data[i+64];
-                end
-                1: begin // 0-31
-                    if (i[5] == 0) begin
-                        f_a[i] = (cnt[6])? g_z[i]   : f_z[i]   ;
-                        f_b[i] = (cnt[6])? g_z[i+32]: f_z[i+32];
-                    end
-                end
-                2: begin // 0-15
-                    if (i[4] == 0) begin
-                        f_a[i] = (cnt[5])? g_z[i]   : f_z[i]   ;
-                        f_b[i] = (cnt[5])? g_z[i+16]: f_z[i+16];
-                    end
-                end
-                3: begin // 0-7
-                    if (i[3] == 0) begin
-                        f_a[i] = (cnt[4])? g_z[i]  : f_z[i]  ;
-                        f_b[i] = (cnt[4])? g_z[i+8]: f_z[i+8];
-                    end
-                end
-                4: begin // 0-3
-                    if (i[2] == 0) begin
-                        f_a[i] = (cnt[3])? g_z[i]  : f_z[i]  ;
-                        f_b[i] = (cnt[3])? g_z[i+4]: f_z[i+4];
-                    end
-                end
-                5: begin // 0-1
-                    if (i[1] == 0) begin
-                        f_a[i] = (cnt[2])? g_z[i]  : f_z[i]  ;
-                        f_b[i] = (cnt[2])? g_z[i+2]: f_z[i+2];
-                    end
-                end
-                6: begin // 0
-                    if (i[0] == 0) begin
-                        f_a[i] = (cnt[1])? g_z[i]  : f_z[i]  ;
-                        f_b[i] = (cnt[1])? g_z[i+1]: f_z[i+1];
-                    end
-                end
-                endcase
+        if (stage_cnt == 8) begin
+            for (i=0; i<256; i=i+1) begin
+                f_a[i] = llr_data[i];
+                f_b[i] = llr_data[i+256];
             end
         end
-        else if (state == N256_DECODE) begin
+        else if (stage_cnt == 7) begin
             for (i=0; i<128; i=i+1) begin
-                case(stage_cnt)
-                0: begin // 0-127
-                    f_a[i] = llr_data[i]    ;
-                    f_b[i] = llr_data[i+128];
-                end
-                1: begin // 0-63
-                    if (i[6] == 0) begin
-                        f_a[i] = (cnt[7])? g_z[i]   : f_z[i]   ;
-                        f_b[i] = (cnt[7])? g_z[i+64]: f_z[i+64];
-                    end
-                end
-                2: begin // 0-31
-                    if (i[5] == 0) begin
-                        f_a[i] = (cnt[6])? g_z[i]   : f_z[i]   ;
-                        f_b[i] = (cnt[6])? g_z[i+32]: f_z[i+32];
-                    end
-                end
-                3: begin // 0-15
-                    if (i[4] == 0) begin
-                        f_a[i] = (cnt[5])? g_z[i]   : f_z[i]   ;
-                        f_b[i] = (cnt[5])? g_z[i+16]: f_z[i+16];
-                    end
-                end
-                4: begin // 0-7
-                    if (i[3] == 0) begin
-                        f_a[i] = (cnt[4])? g_z[i]  : f_z[i]  ;
-                        f_b[i] = (cnt[4])? g_z[i+8]: f_z[i+8];
-                    end
-                end
-                5: begin // 0-3
-                    if (i[2] == 0) begin
-                        f_a[i] = (cnt[3])? g_z[i]  : f_z[i]  ;
-                        f_b[i] = (cnt[3])? g_z[i+4]: f_z[i+4];
-                    end
-                end
-                6: begin // 0-1
-                    if (i[1] == 0) begin
-                        f_a[i] = (cnt[2])? g_z[i]  : f_z[i]  ;
-                        f_b[i] = (cnt[2])? g_z[i+2]: f_z[i+2];
-                    end
-                end
-                7: begin // 0
-                    if (i[0] == 0) begin
-                        f_a[i] = (cnt[1])? g_z[i]  : f_z[i]  ;
-                        f_b[i] = (cnt[1])? g_z[i+1]: f_z[i+1];
-                    end
-                end
-                endcase
+                f_a[i] = stage_buf_8[i];
+                f_b[i] = stage_buf_8[i+128];
             end
         end
-        else begin
-            for (i=0; i<256; i=i+1) begin
-                case(stage_cnt)
-                0: begin // 0-255
-                    f_a[i] = llr_data[i]    ;
-                    f_b[i] = llr_data[i+256];
-                end
-                1: begin // 0-127
-                    if (i[7] == 0) begin
-                        f_a[i] = (cnt[8])? g_z[i]    : f_z[i]    ;
-                        f_b[i] = (cnt[8])? g_z[i+128]: f_z[i+128];
-                    end
-                end
-                2: begin // 0-63
-                    if (i[6] == 0) begin
-                        f_a[i] = (cnt[7])? g_z[i]   : f_z[i]   ;
-                        f_b[i] = (cnt[7])? g_z[i+64]: f_z[i+64];
-                    end
-                end
-                3: begin // 0-31
-                    if (i[5] == 0) begin
-                        f_a[i] = (cnt[6])? g_z[i]   : f_z[i]   ;
-                        f_b[i] = (cnt[6])? g_z[i+32]: f_z[i+32];
-                    end
-                end
-                4: begin // 0-15
-                    if (i[4] == 0) begin
-                        f_a[i] = (cnt[5])? g_z[i]   : f_z[i]   ;
-                        f_b[i] = (cnt[5])? g_z[i+16]: f_z[i+16];
-                    end
-                end
-                5: begin // 0-7
-                    if (i[3] == 0) begin
-                        f_a[i] = (cnt[4])? g_z[i]  : f_z[i]  ;
-                        f_b[i] = (cnt[4])? g_z[i+8]: f_z[i+8];
-                    end
-                end
-                6: begin // 0-3
-                    if (i[2] == 0) begin
-                        f_a[i] = (cnt[3])? g_z[i]  : f_z[i]  ;
-                        f_b[i] = (cnt[3])? g_z[i+4]: f_z[i+4];
-                    end
-                end
-                7: begin // 0-1
-                    if (i[1] == 0) begin
-                        f_a[i] = (cnt[2])? g_z[i]  : f_z[i]  ;
-                        f_b[i] = (cnt[2])? g_z[i+2]: f_z[i+2];
-                    end
-                end
-                8: begin // 0
-                    if (i[0] == 0) begin
-                        f_a[i] = (cnt[1])? g_z[i]  : f_z[i]  ;
-                        f_b[i] = (cnt[1])? g_z[i+1]: f_z[i+1];
-                    end
-                end
-                endcase
+        else if (stage_cnt == 6) begin
+            for (i=0; i<64; i=i+1) begin
+                f_a[i] = stage_buf_7[i];
+                f_b[i] = stage_buf_7[i+64];
             end
         end
-    end
-
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            for (i=0; i<256; i=i+1) begin
-                f_z[i]  <= 0;
+        else if (stage_cnt == 5) begin
+            for (i=0; i<32; i=i+1) begin
+                f_a[i] = stage_buf_6[i];
+                f_b[i] = stage_buf_6[i+32];
             end
         end
-        else begin
-            for (i=0; i<256; i=i+1) begin
-                f_z[i]  <= f_z_nxt[i];
+        else if (stage_cnt == 4) begin
+            for (i=0; i<16; i=i+1) begin
+                f_a[i] = stage_buf_5[i];
+                f_b[i] = stage_buf_5[i+16];
+            end
+        end
+        else if (stage_cnt == 3) begin
+            for (i=0; i<8; i=i+1) begin
+                f_a[i] = stage_buf_4[i];
+                f_b[i] = stage_buf_4[i+8];
+            end
+        end
+        else if (stage_cnt == 2) begin
+            for (i=0; i<4; i=i+1) begin
+                f_a[i] = stage_buf_3[i];
+                f_b[i] = stage_buf_3[i+4];
+            end
+        end
+        else if (stage_cnt == 1) begin
+            for (i=0; i<2; i=i+1) begin
+                f_a[i] = stage_buf_2[i];
+                f_b[i] = stage_buf_2[i+2];
+            end
+        end
+        else if (stage_cnt == 0) begin
+            for (i=0; i<1; i=i+1) begin
+                f_a[i] = stage_buf_1[i];
+                f_b[i] = stage_buf_1[i+1];
             end
         end
     end
@@ -551,6 +646,18 @@ module polar_decoder (
     // ========================================
     // LLR decoder (g)
     // ========================================
+
+    wire    [8:0]   u_7_idx;
+    wire    [8:0]   u_6_idx;
+    wire    [8:0]   u_5_idx;
+    wire    [8:0]   u_4_idx;
+    wire    [8:0]   u_3_idx;
+    wire    [8:0]   u_2_idx;
+    wire    [8:0]   u_1_idx;
+    wire    [8:0]   u_0_idx;
+
+    
+    assign u_7_idx = ~stage_flag[8];
 
     generate
     genvar gen_j;
@@ -567,223 +674,70 @@ module polar_decoder (
             g_u[i] = 0;
         end
 
-        if (state == N128_DECODE) begin
-            for (i=0; i<64; i=i+1) begin
-                case(stage_cnt)
-                0: begin // 0-63
-                    g_a[i] = llr_data[i]   ;
-                    g_b[i] = llr_data[i+64];
-                    g_u[i] = u_7[i];
-                end
-                1: begin // 0-31
-                    if (i[5] == 0) begin
-                        g_a[i] = (cnt[6])? g_z[i]   : f_z[i]   ;
-                        g_b[i] = (cnt[6])? g_z[i+32]: f_z[i+32];
-                        g_u[i] = u_6[{cnt[8:6],6'b0}+i[4:0]];
-                    end
-                end
-                2: begin // 0-15
-                    if (i[4] == 0) begin
-                        g_a[i] = (cnt[5])? g_z[i]   : f_z[i]   ;
-                        g_b[i] = (cnt[5])? g_z[i+16]: f_z[i+16];
-                        g_u[i] = u_5[{cnt[8:5],5'b0}+i[3:0]];
-                    end
-                end
-                3: begin // 0-7
-                    if (i[3] == 0) begin
-                        g_a[i] = (cnt[4])? g_z[i]   : f_z[i]   ;
-                        g_b[i] = (cnt[4])? g_z[i+ 8]: f_z[i+ 8];
-                        g_u[i] = u_4[{cnt[8:4],4'b0}+i[2:0]];
-                    end
-                end
-                4: begin // 0-3
-                    if (i[2] == 0) begin
-                        g_a[i] = (cnt[3])? g_z[i]   : f_z[i]  ;
-                        g_b[i] = (cnt[3])? g_z[i+ 4]: f_z[i+ 4];
-                        g_u[i] = u_3[{cnt[8:3],3'b0}+i[1:0]];
-                    end
-                end
-                5: begin // 0-1
-                    if (i[1] == 0) begin
-                        g_a[i] = (cnt[2])? g_z[i]  : f_z[i]  ;
-                        g_b[i] = (cnt[2])? g_z[i+2]: f_z[i+2];
-                        g_u[i] = u_2[{cnt[8:2],2'b0}+i[0]];
-                    end
-                end
-                6: begin // 0
-                    if (i[0] == 0) begin
-                        g_a[i] = (cnt[1])? g_z[i]  : f_z[i]  ;
-                        g_b[i] = (cnt[1])? g_z[i+1]: f_z[i+1];
-                        g_u[i] = u_1[{cnt[8:1],1'b0}];
-                    end
-                end
-                endcase
+        if (stage_cnt == 8) begin
+            for (i=0; i<256; i=i+1) begin
+                g_a[i] = llr_data[i];
+                g_b[i] = llr_data[i+256];
+                g_u[i] = u_8[i[7:0]];
             end
         end
-        else if (state == N256_DECODE) begin
+        else if (stage_cnt == 7) begin
             for (i=0; i<128; i=i+1) begin
-                case(stage_cnt)
-                0: begin // 0-127
-                    g_a[i] = llr_data[i]    ;
-                    g_b[i] = llr_data[i+128];
-                    g_u[i] = u_8[i];
-                end
-                1: begin // 0-63
-                    if (i[6] == 0) begin
-                        g_a[i] = (cnt[7])? g_z[i]   : f_z[i]   ;
-                        g_b[i] = (cnt[7])? g_z[i+64]: f_z[i+64];
-                        g_u[i] = u_7[{cnt[8:7],7'b0}+i[5:0]];
-                    end
-                end
-                2: begin // 0-31
-                    if (i[5] == 0) begin
-                        g_a[i] = (cnt[6])? g_z[i]   : f_z[i]   ;
-                        g_b[i] = (cnt[6])? g_z[i+32]: f_z[i+32];
-                        g_u[i] = u_6[{cnt[8:6],6'b0}+i[4:0]];
-                    end
-                end
-                3: begin // 0-15
-                    if (i[4] == 0) begin
-                        g_a[i] = (cnt[5])? g_z[i]   : f_z[i]   ;
-                        g_b[i] = (cnt[5])? g_z[i+16]: f_z[i+16];
-                        g_u[i] = u_5[{cnt[8:5],5'b0}+i[3:0]];
-                    end
-                end
-                4: begin // 0-7
-                    if (i[3] == 0) begin
-                        g_a[i] = (cnt[4])? g_z[i]   : f_z[i]   ;
-                        g_b[i] = (cnt[4])? g_z[i+ 8]: f_z[i+ 8];
-                        g_u[i] = u_4[{cnt[8:4],4'b0}+i[2:0]];
-                    end
-                end
-                5: begin // 0-3
-                    if (i[2] == 0) begin
-                        g_a[i] = (cnt[3])? g_z[i]   : f_z[i]  ;
-                        g_b[i] = (cnt[3])? g_z[i+ 4]: f_z[i+ 4];
-                        g_u[i] = u_3[{cnt[8:3],3'b0}+i[1:0]];
-                    end
-                end
-                6: begin // 0-1
-                    if (i[1] == 0) begin
-                        g_a[i] = (cnt[2])? g_z[i]  : f_z[i]  ;
-                        g_b[i] = (cnt[2])? g_z[i+2]: f_z[i+2];
-                        g_u[i] = u_2[{cnt[8:2],2'b0}+i[0]];
-                    end
-                end
-                7: begin // 0
-                    if (i[0] == 0) begin
-                        g_a[i] = (cnt[1])? g_z[i]  : f_z[i]  ;
-                        g_b[i] = (cnt[1])? g_z[i+1]: f_z[i+1];
-                        g_u[i] = u_1[{cnt[8:1],1'b0}];
-                    end
-                end
-                endcase
+                g_a[i] = stage_buf_8[i];
+                g_b[i] = stage_buf_8[i+128];
+                g_u[i] = u_7[{~stage_flag[8],1'b0,i[6:0]}];
             end
         end
-        else begin
-            for (i=0; i<256; i=i+1) begin
-                case(stage_cnt)
-                0: begin // 0-255
-                    g_a[i] = llr_data[i];
-                    g_b[i] = llr_data[i+256];
-                    g_u[i] = u_9[i];
-                end
-                1: begin // 0-127
-                    if (i[7] == 0) begin
-                        g_a[i] = (cnt[8])? g_z[i]    : f_z[i]    ;
-                        g_b[i] = (cnt[8])? g_z[i+128]: f_z[i+128];
-                        g_u[i] = u_8[{cnt[8],8'b0}+i[6:0]];
-                    end
-                end
-                2: begin // 0-63
-                    if (i[6] == 0) begin
-                        g_a[i] = (cnt[7])? g_z[i]   : f_z[i]   ;
-                        g_b[i] = (cnt[7])? g_z[i+64]: f_z[i+64];
-                        g_u[i] = u_7[{cnt[8:7],7'b0}+i[5:0]];
-                    end
-                end
-                3: begin // 0-31
-                    if (i[5] == 0) begin
-                        g_a[i] = (cnt[6])? g_z[i]   : f_z[i]   ;
-                        g_b[i] = (cnt[6])? g_z[i+32]: f_z[i+32];
-                        g_u[i] = u_6[{cnt[8:6],6'b0}+i[4:0]];
-                    end
-                end
-                4: begin // 0-15
-                    if (i[4] == 0) begin
-                        g_a[i] = (cnt[5])? g_z[i]   : f_z[i]   ;
-                        g_b[i] = (cnt[5])? g_z[i+16]: f_z[i+16];
-                        g_u[i] = u_5[{cnt[8:5],5'b0}+i[3:0]];
-                    end
-                end
-                5: begin // 0-7
-                    if (i[3] == 0) begin
-                        g_a[i] = (cnt[4])? g_z[i]   : f_z[i]   ;
-                        g_b[i] = (cnt[4])? g_z[i+ 8]: f_z[i+ 8];
-                        g_u[i] = u_4[{cnt[8:4],4'b0}+i[2:0]];
-                    end
-                end
-                6: begin // 0-3
-                    if (i[2] == 0) begin
-                        g_a[i] = (cnt[3])? g_z[i]   : f_z[i]  ;
-                        g_b[i] = (cnt[3])? g_z[i+ 4]: f_z[i+ 4];
-                        g_u[i] = u_3[{cnt[8:3],3'b0}+i[1:0]];
-                    end
-                end
-                7: begin // 0-1
-                    if (i[1] == 0) begin
-                        g_a[i] = (cnt[2])? g_z[i]  : f_z[i]  ;
-                        g_b[i] = (cnt[2])? g_z[i+2]: f_z[i+2];
-                        g_u[i] = u_2[{cnt[8:2],2'b0}+i[0]];
-                    end
-                end
-                8: begin // 0
-                    if (i[0] == 0) begin
-                        g_a[i] = (cnt[1])? g_z[i]  : f_z[i]  ;
-                        g_b[i] = (cnt[1])? g_z[i+1]: f_z[i+1];
-                        g_u[i] = u_1[{cnt[8:1],1'b0}];
-                    end
-                end
-                endcase
+        else if (stage_cnt == 6) begin
+            for (i=0; i<64; i=i+1) begin
+                g_a[i] = stage_buf_7[i];
+                g_b[i] = stage_buf_7[i+64];
+                g_u[i] = u_6[{~stage_flag[8:7],1'b0,i[5:0]}];
+            end
+        end
+        else if (stage_cnt == 5) begin
+            for (i=0; i<32; i=i+1) begin
+                g_a[i] = stage_buf_6[i];
+                g_b[i] = stage_buf_6[i+32];
+                g_u[i] = u_5[{~stage_flag[8:6],1'b0,i[4:0]}];
+            end
+        end
+        else if (stage_cnt == 4) begin
+            for (i=0; i<16; i=i+1) begin
+                g_a[i] = stage_buf_5[i];
+                g_b[i] = stage_buf_5[i+16];
+                g_u[i] = u_4[{~stage_flag[8:5],1'b0,i[3:0]}];
+            end
+        end
+        else if (stage_cnt == 3) begin
+            for (i=0; i<8; i=i+1) begin
+                g_a[i] = stage_buf_4[i];
+                g_b[i] = stage_buf_4[i+8];
+                g_u[i] = u_3[{~stage_flag[8:4],1'b0,i[2:0]}];
+            end
+        end
+        else if (stage_cnt == 2) begin
+            for (i=0; i<4; i=i+1) begin
+                g_a[i] = stage_buf_3[i];
+                g_b[i] = stage_buf_3[i+4];
+                g_u[i] = u_2[{~stage_flag[8:3],1'b0,i[1:0]}];
+            end
+        end
+        else if (stage_cnt == 1) begin
+            for (i=0; i<2; i=i+1) begin
+                g_a[i] = stage_buf_2[i];
+                g_b[i] = stage_buf_2[i+2];
+                g_u[i] = u_1[{~stage_flag[8:2],1'b0,i[0]}];
+            end
+        end
+        else if (stage_cnt == 0) begin
+            for (i=0; i<1; i=i+1) begin
+                g_a[i] = stage_buf_1[i];
+                g_b[i] = stage_buf_1[i+1];
+                g_u[i] = u_0[{~stage_flag[8:1],1'b0}];
             end
         end
     end
-
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            for (i=0; i<256; i=i+1) begin
-                g_z[i]  <= 0;
-            end
-        end
-        else begin
-            for (i=0; i<256; i=i+1) begin
-                g_z[i]  <= g_z_nxt[i];
-            end
-        end
-    end
-
-    // ========================================
-    // Frozen mapper
-    // ========================================
-
-    // always @(posedge clk or negedge rst_n) begin
-    //     if (!rst_n) begin
-    //         for (i=0; i<512; i=i+1) begin
-    //             u[i] <= 0;
-    //         end
-    //     end
-    //     else begin
-    //         if (state == N128_DECODE && stage_cnt == 6) begin
-    //             u[cnt]  <= (cnt[0])? g_z_nxt[0]: f_z_nxt[0];
-    //         end
-    //         else if (state == N256_DECODE && stage_cnt == 7) begin
-    //             u[cnt]  <= (cnt[0])? g_z_nxt[0]: f_z_nxt[0];
-    //         end
-    //         else if (state == N512_DECODE && stage_cnt == 8) begin
-    //             u[cnt]  <= (cnt[0])? g_z_nxt[0]: f_z_nxt[0];
-    //         end
-    //     end
-    // end
 
     // ========================================
     // reliability LUT
@@ -796,7 +750,7 @@ module polar_decoder (
 
     reliability_LUT reliability_LUT_inst(
         .N(N[9:8]),
-        .index(cnt[8:0]),
+        .index({~stage_flag[8:1],stage_flag[0]}),
         .reliability(reliab)
     );
 
@@ -807,7 +761,7 @@ module polar_decoder (
     wire    h;
 
     assign  h = (frozen_bit)? 0:
-                (cnt[0])? g_z_nxt[0][21]:
+                (stage_flag[0])? g_z_nxt[0][21]:
                 f_z_nxt[0][21];
 
     always @(posedge clk or negedge rst_n) begin
@@ -817,14 +771,10 @@ module polar_decoder (
             end
         end
         else begin
-            if (state == N128_DECODE && stage_cnt == 6) begin
-                u[cnt]  <= h;
-            end
-            else if (state == N256_DECODE && stage_cnt == 7) begin
-                u[cnt]  <= h;
-            end
-            else if (state == N512_DECODE && stage_cnt == 8) begin
-                u[cnt]  <= h;
+            if (state == N128_DECODE || state == N256_DECODE || state == N512_DECODE) begin
+                if (stage_cnt == 0) begin
+                    u[{~stage_flag[8:1],stage_flag[0]}] <= h;
+                end
             end
         end
     end
@@ -853,17 +803,11 @@ module polar_decoder (
                 dec_idx     <= 0;
             end
             else begin
-                if (state == N128_DECODE && stage_cnt == 6 && frozen_bit == 0) begin
-                    write_data[dec_idx] <= h;
-                    dec_idx <= dec_idx+1;
-                end
-                else if (state == N256_DECODE && stage_cnt == 7 && frozen_bit == 0) begin
-                    write_data[dec_idx] <= h;
-                    dec_idx <= dec_idx+1;
-                end
-                else if (state == N512_DECODE && stage_cnt == 8 && frozen_bit == 0) begin
-                    write_data[dec_idx] <= h;
-                    dec_idx <= dec_idx+1;
+                if (state == N128_DECODE || state == N256_DECODE || state == N512_DECODE) begin
+                    if (stage_cnt == 0 && frozen_bit == 0) begin
+                        write_data[dec_idx] <= h;
+                        dec_idx <= dec_idx+1;
+                    end
                 end
             end
         end

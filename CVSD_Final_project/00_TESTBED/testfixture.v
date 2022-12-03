@@ -49,17 +49,17 @@ end
    initial       $sdf_annotate(`SDFFILE, u_polar_decoder );
 `endif
 
-initial begin
-`ifdef BASE
-$fsdbDumpfile("polar_decoder_BASE.fsdb");
-`elsif FULL
-$fsdbDumpfile("polar_decoder_FULL.fsdb");
-`else
-$fsdbDumpfile("polar_decoder_BASE.fsdb");
-`endif
-$fsdbDumpvars;
-$fsdbDumpMDA;
-end
+// initial begin
+// `ifdef BASE
+// $fsdbDumpfile("polar_decoder_BASE.fsdb");
+// `elsif FULL
+// $fsdbDumpfile("polar_decoder_FULL.fsdb");
+// `else
+// $fsdbDumpfile("polar_decoder_BASE.fsdb");
+// `endif
+// $fsdbDumpvars;
+// $fsdbDumpMDA;
+// end
 
 parameter LLR_MEM_WIDTH = 192;
 parameter LLR_MEM_WORD  = 1453;
