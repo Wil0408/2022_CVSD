@@ -35,6 +35,7 @@ set_wire_load_model -name tsmc13_wl10 -library slow
 # =================================================== #
 check_design
 uniquify
+set_max_area 0
 set_fix_multiple_port_nets -all -buffer_constants  [get_designs *]
 set_fix_hold [all_clocks]
 

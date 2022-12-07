@@ -1,0 +1,702 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay min
+        -max_paths 20
+Design : polar_decoder
+Version: R-2020.09-SP5
+Date   : Thu Dec  8 00:12:17 2022
+****************************************
+
+ # A fanout number of 1000 was used for high fanout net computations.
+
+Operating Conditions: slow   Library: slow
+Wire Load Model Mode: top
+
+  Startpoint: stage_buf_8_reg[241][5]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: stage_buf_8_reg[241][5]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  polar_decoder      tsmc13_wl10           slow
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  stage_buf_8_reg[241][5]/CK (DFFRX4)      0.00 #     0.00 r
+  stage_buf_8_reg[241][5]/QN (DFFRX4)      0.31       0.31 r
+  U22136/Y (OR2X6)                         0.12       0.44 r
+  U22137/Y (NAND3X4)                       0.08       0.52 f
+  stage_buf_8_reg[241][5]/D (DFFRX4)       0.00       0.52 f
+  data arrival time                                   0.52
+
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  clock uncertainty                        0.10       0.10
+  stage_buf_8_reg[241][5]/CK (DFFRX4)      0.00       0.10 r
+  library hold time                        0.03       0.13
+  data required time                                  0.13
+  -----------------------------------------------------------
+  data required time                                  0.13
+  data arrival time                                  -0.52
+  -----------------------------------------------------------
+  slack (MET)                                         0.39
+
+
+  Startpoint: stage_buf_8_reg[241][6]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: stage_buf_8_reg[241][6]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  polar_decoder      tsmc13_wl10           slow
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  stage_buf_8_reg[241][6]/CK (DFFRX2)      0.00 #     0.00 r
+  stage_buf_8_reg[241][6]/QN (DFFRX2)      0.39       0.39 r
+  U22153/Y (OR2X6)                         0.14       0.53 r
+  U22154/Y (NAND3X4)                       0.08       0.61 f
+  stage_buf_8_reg[241][6]/D (DFFRX2)       0.00       0.61 f
+  data arrival time                                   0.61
+
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  clock uncertainty                        0.10       0.10
+  stage_buf_8_reg[241][6]/CK (DFFRX2)      0.00       0.10 r
+  library hold time                        0.00       0.10
+  data required time                                  0.10
+  -----------------------------------------------------------
+  data required time                                  0.10
+  data arrival time                                  -0.61
+  -----------------------------------------------------------
+  slack (MET)                                         0.51
+
+
+  Startpoint: stage_buf_3_reg[5][17]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: stage_buf_3_reg[5][17]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  polar_decoder      tsmc13_wl10           slow
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  stage_buf_3_reg[5][17]/CK (DFFRX2)       0.00 #     0.00 r
+  stage_buf_3_reg[5][17]/QN (DFFRX2)       0.27       0.27 f
+  U22219/Y (OR2X4)                         0.19       0.46 f
+  U22220/Y (NAND3X6)                       0.08       0.55 r
+  stage_buf_3_reg[5][17]/D (DFFRX2)        0.00       0.55 r
+  data arrival time                                   0.55
+
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  clock uncertainty                        0.10       0.10
+  stage_buf_3_reg[5][17]/CK (DFFRX2)       0.00       0.10 r
+  library hold time                       -0.08       0.02
+  data required time                                  0.02
+  -----------------------------------------------------------
+  data required time                                  0.02
+  data arrival time                                  -0.55
+  -----------------------------------------------------------
+  slack (MET)                                         0.52
+
+
+  Startpoint: stage_buf_7_reg[116][6]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: stage_buf_7_reg[116][6]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  polar_decoder      tsmc13_wl10           slow
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  stage_buf_7_reg[116][6]/CK (DFFRX4)      0.00 #     0.00 r
+  stage_buf_7_reg[116][6]/QN (DFFRX4)      0.31       0.31 r
+  U22268/Y (OA22X2)                        0.23       0.53 r
+  U22266/Y (NAND3X2)                       0.12       0.65 f
+  stage_buf_7_reg[116][6]/D (DFFRX4)       0.00       0.65 f
+  data arrival time                                   0.65
+
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  clock uncertainty                        0.10       0.10
+  stage_buf_7_reg[116][6]/CK (DFFRX4)      0.00       0.10 r
+  library hold time                        0.03       0.13
+  data required time                                  0.13
+  -----------------------------------------------------------
+  data required time                                  0.13
+  data arrival time                                  -0.65
+  -----------------------------------------------------------
+  slack (MET)                                         0.52
+
+
+  Startpoint: stage_buf_8_reg[241][5]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: stage_buf_8_reg[225][5]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  polar_decoder      tsmc13_wl10           slow
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  stage_buf_8_reg[241][5]/CK (DFFRX4)      0.00 #     0.00 r
+  stage_buf_8_reg[241][5]/Q (DFFRX4)       0.33       0.33 r
+  U39229/Y (CLKMX2X2)                      0.19       0.52 r
+  stage_buf_8_reg[225][5]/D (DFFRX1)       0.00       0.52 r
+  data arrival time                                   0.52
+
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  clock uncertainty                        0.10       0.10
+  stage_buf_8_reg[225][5]/CK (DFFRX1)      0.00       0.10 r
+  library hold time                       -0.11      -0.01
+  data required time                                 -0.01
+  -----------------------------------------------------------
+  data required time                                 -0.01
+  data arrival time                                  -0.52
+  -----------------------------------------------------------
+  slack (MET)                                         0.53
+
+
+  Startpoint: write_data_reg[21]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: write_data_reg[21]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  polar_decoder      tsmc13_wl10           slow
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  write_data_reg[21]/CK (DFFRX1)           0.00 #     0.00 r
+  write_data_reg[21]/QN (DFFRX1)           0.45       0.45 r
+  U21853/Y (OAI22X2)                       0.15       0.60 f
+  write_data_reg[21]/D (DFFRX1)            0.00       0.60 f
+  data arrival time                                   0.60
+
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  clock uncertainty                        0.10       0.10
+  write_data_reg[21]/CK (DFFRX1)           0.00       0.10 r
+  library hold time                       -0.04       0.06
+  data required time                                  0.06
+  -----------------------------------------------------------
+  data required time                                  0.06
+  data arrival time                                  -0.60
+  -----------------------------------------------------------
+  slack (MET)                                         0.54
+
+
+  Startpoint: write_data_reg[16]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: write_data_reg[16]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  polar_decoder      tsmc13_wl10           slow
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  write_data_reg[16]/CK (DFFRX1)           0.00 #     0.00 r
+  write_data_reg[16]/QN (DFFRX1)           0.45       0.45 r
+  U22050/Y (OAI22X2)                       0.15       0.60 f
+  write_data_reg[16]/D (DFFRX1)            0.00       0.60 f
+  data arrival time                                   0.60
+
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  clock uncertainty                        0.10       0.10
+  write_data_reg[16]/CK (DFFRX1)           0.00       0.10 r
+  library hold time                       -0.04       0.06
+  data required time                                  0.06
+  -----------------------------------------------------------
+  data required time                                  0.06
+  data arrival time                                  -0.60
+  -----------------------------------------------------------
+  slack (MET)                                         0.54
+
+
+  Startpoint: write_data_reg[43]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: write_data_reg[43]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  polar_decoder      tsmc13_wl10           slow
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  write_data_reg[43]/CK (DFFRX1)           0.00 #     0.00 r
+  write_data_reg[43]/QN (DFFRX1)           0.45       0.45 r
+  U21851/Y (OAI22X2)                       0.15       0.60 f
+  write_data_reg[43]/D (DFFRX1)            0.00       0.60 f
+  data arrival time                                   0.60
+
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  clock uncertainty                        0.10       0.10
+  write_data_reg[43]/CK (DFFRX1)           0.00       0.10 r
+  library hold time                       -0.04       0.06
+  data required time                                  0.06
+  -----------------------------------------------------------
+  data required time                                  0.06
+  data arrival time                                  -0.60
+  -----------------------------------------------------------
+  slack (MET)                                         0.54
+
+
+  Startpoint: stage_buf_8_reg[190][8]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: stage_buf_8_reg[190][8]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  polar_decoder      tsmc13_wl10           slow
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  stage_buf_8_reg[190][8]/CK (DFFRX1)      0.00 #     0.00 r
+  stage_buf_8_reg[190][8]/QN (DFFRX1)      0.42       0.42 r
+  U39027/Y (MXI2X1)                        0.18       0.59 f
+  stage_buf_8_reg[190][8]/D (DFFRX1)       0.00       0.59 f
+  data arrival time                                   0.59
+
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  clock uncertainty                        0.10       0.10
+  stage_buf_8_reg[190][8]/CK (DFFRX1)      0.00       0.10 r
+  library hold time                       -0.05       0.05
+  data required time                                  0.05
+  -----------------------------------------------------------
+  data required time                                  0.05
+  data arrival time                                  -0.59
+  -----------------------------------------------------------
+  slack (MET)                                         0.55
+
+
+  Startpoint: stage_buf_8_reg[237][6]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: stage_buf_8_reg[237][6]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  polar_decoder      tsmc13_wl10           slow
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  stage_buf_8_reg[237][6]/CK (DFFRX1)      0.00 #     0.00 r
+  stage_buf_8_reg[237][6]/QN (DFFRX1)      0.42       0.42 r
+  U39701/Y (MXI2X1)                        0.18       0.59 f
+  stage_buf_8_reg[237][6]/D (DFFRX1)       0.00       0.59 f
+  data arrival time                                   0.59
+
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  clock uncertainty                        0.10       0.10
+  stage_buf_8_reg[237][6]/CK (DFFRX1)      0.00       0.10 r
+  library hold time                       -0.05       0.05
+  data required time                                  0.05
+  -----------------------------------------------------------
+  data required time                                  0.05
+  data arrival time                                  -0.59
+  -----------------------------------------------------------
+  slack (MET)                                         0.55
+
+
+  Startpoint: stage_buf_2_reg[0][18]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: stage_buf_2_reg[0][18]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  polar_decoder      tsmc13_wl10           slow
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  stage_buf_2_reg[0][18]/CK (DFFRX2)       0.00 #     0.00 r
+  stage_buf_2_reg[0][18]/QN (DFFRX2)       0.37       0.37 r
+  U22228/Y (OR2X2)                         0.16       0.53 r
+  U22229/Y (NAND3X2)                       0.11       0.64 f
+  stage_buf_2_reg[0][18]/D (DFFRX2)        0.00       0.64 f
+  data arrival time                                   0.64
+
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  clock uncertainty                        0.10       0.10
+  stage_buf_2_reg[0][18]/CK (DFFRX2)       0.00       0.10 r
+  library hold time                        0.00       0.10
+  data required time                                  0.10
+  -----------------------------------------------------------
+  data required time                                  0.10
+  data arrival time                                  -0.64
+  -----------------------------------------------------------
+  slack (MET)                                         0.55
+
+
+  Startpoint: write_data_reg[59]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: write_data_reg[59]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  polar_decoder      tsmc13_wl10           slow
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  write_data_reg[59]/CK (DFFRX1)           0.00 #     0.00 r
+  write_data_reg[59]/QN (DFFRX1)           0.42       0.42 r
+  U21915/Y (OAI22X1)                       0.19       0.61 f
+  write_data_reg[59]/D (DFFRX1)            0.00       0.61 f
+  data arrival time                                   0.61
+
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  clock uncertainty                        0.10       0.10
+  write_data_reg[59]/CK (DFFRX1)           0.00       0.10 r
+  library hold time                       -0.05       0.05
+  data required time                                  0.05
+  -----------------------------------------------------------
+  data required time                                  0.05
+  data arrival time                                  -0.61
+  -----------------------------------------------------------
+  slack (MET)                                         0.56
+
+
+  Startpoint: write_data_reg[75]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: write_data_reg[75]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  polar_decoder      tsmc13_wl10           slow
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  write_data_reg[75]/CK (DFFRX1)           0.00 #     0.00 r
+  write_data_reg[75]/QN (DFFRX1)           0.42       0.42 r
+  U21953/Y (OAI22X1)                       0.19       0.61 f
+  write_data_reg[75]/D (DFFRX1)            0.00       0.61 f
+  data arrival time                                   0.61
+
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  clock uncertainty                        0.10       0.10
+  write_data_reg[75]/CK (DFFRX1)           0.00       0.10 r
+  library hold time                       -0.05       0.05
+  data required time                                  0.05
+  -----------------------------------------------------------
+  data required time                                  0.05
+  data arrival time                                  -0.61
+  -----------------------------------------------------------
+  slack (MET)                                         0.56
+
+
+  Startpoint: write_data_reg[32]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: write_data_reg[32]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  polar_decoder      tsmc13_wl10           slow
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  write_data_reg[32]/CK (DFFRX1)           0.00 #     0.00 r
+  write_data_reg[32]/QN (DFFRX1)           0.42       0.42 r
+  U21763/Y (OAI22X1)                       0.19       0.61 f
+  write_data_reg[32]/D (DFFRX1)            0.00       0.61 f
+  data arrival time                                   0.61
+
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  clock uncertainty                        0.10       0.10
+  write_data_reg[32]/CK (DFFRX1)           0.00       0.10 r
+  library hold time                       -0.05       0.05
+  data required time                                  0.05
+  -----------------------------------------------------------
+  data required time                                  0.05
+  data arrival time                                  -0.61
+  -----------------------------------------------------------
+  slack (MET)                                         0.56
+
+
+  Startpoint: write_data_reg[114]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: write_data_reg[114]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  polar_decoder      tsmc13_wl10           slow
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  write_data_reg[114]/CK (DFFRX1)          0.00 #     0.00 r
+  write_data_reg[114]/QN (DFFRX1)          0.42       0.42 r
+  U22086/Y (OAI22X1)                       0.19       0.61 f
+  write_data_reg[114]/D (DFFRX1)           0.00       0.61 f
+  data arrival time                                   0.61
+
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  clock uncertainty                        0.10       0.10
+  write_data_reg[114]/CK (DFFRX1)          0.00       0.10 r
+  library hold time                       -0.05       0.05
+  data required time                                  0.05
+  -----------------------------------------------------------
+  data required time                                  0.05
+  data arrival time                                  -0.61
+  -----------------------------------------------------------
+  slack (MET)                                         0.56
+
+
+  Startpoint: write_data_reg[33]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: write_data_reg[33]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  polar_decoder      tsmc13_wl10           slow
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  write_data_reg[33]/CK (DFFRX1)           0.00 #     0.00 r
+  write_data_reg[33]/QN (DFFRX1)           0.42       0.42 r
+  U21850/Y (OAI22X1)                       0.19       0.61 f
+  write_data_reg[33]/D (DFFRX1)            0.00       0.61 f
+  data arrival time                                   0.61
+
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  clock uncertainty                        0.10       0.10
+  write_data_reg[33]/CK (DFFRX1)           0.00       0.10 r
+  library hold time                       -0.05       0.05
+  data required time                                  0.05
+  -----------------------------------------------------------
+  data required time                                  0.05
+  data arrival time                                  -0.61
+  -----------------------------------------------------------
+  slack (MET)                                         0.56
+
+
+  Startpoint: write_data_reg[17]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: write_data_reg[17]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  polar_decoder      tsmc13_wl10           slow
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  write_data_reg[17]/CK (DFFRX1)           0.00 #     0.00 r
+  write_data_reg[17]/QN (DFFRX1)           0.42       0.42 r
+  U21863/Y (OAI22X1)                       0.19       0.61 f
+  write_data_reg[17]/D (DFFRX1)            0.00       0.61 f
+  data arrival time                                   0.61
+
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  clock uncertainty                        0.10       0.10
+  write_data_reg[17]/CK (DFFRX1)           0.00       0.10 r
+  library hold time                       -0.05       0.05
+  data required time                                  0.05
+  -----------------------------------------------------------
+  data required time                                  0.05
+  data arrival time                                  -0.61
+  -----------------------------------------------------------
+  slack (MET)                                         0.56
+
+
+  Startpoint: write_data_reg[27]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: write_data_reg[27]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  polar_decoder      tsmc13_wl10           slow
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  write_data_reg[27]/CK (DFFRX1)           0.00 #     0.00 r
+  write_data_reg[27]/QN (DFFRX1)           0.42       0.42 r
+  U21895/Y (OAI22X1)                       0.19       0.61 f
+  write_data_reg[27]/D (DFFRX1)            0.00       0.61 f
+  data arrival time                                   0.61
+
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  clock uncertainty                        0.10       0.10
+  write_data_reg[27]/CK (DFFRX1)           0.00       0.10 r
+  library hold time                       -0.05       0.05
+  data required time                                  0.05
+  -----------------------------------------------------------
+  data required time                                  0.05
+  data arrival time                                  -0.61
+  -----------------------------------------------------------
+  slack (MET)                                         0.56
+
+
+  Startpoint: write_data_reg[24]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: write_data_reg[24]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  polar_decoder      tsmc13_wl10           slow
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  write_data_reg[24]/CK (DFFRX1)           0.00 #     0.00 r
+  write_data_reg[24]/QN (DFFRX1)           0.42       0.42 r
+  U23724/Y (OAI22X1)                       0.19       0.61 f
+  write_data_reg[24]/D (DFFRX1)            0.00       0.61 f
+  data arrival time                                   0.61
+
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  clock uncertainty                        0.10       0.10
+  write_data_reg[24]/CK (DFFRX1)           0.00       0.10 r
+  library hold time                       -0.05       0.05
+  data required time                                  0.05
+  -----------------------------------------------------------
+  data required time                                  0.05
+  data arrival time                                  -0.61
+  -----------------------------------------------------------
+  slack (MET)                                         0.56
+
+
+  Startpoint: write_data_reg[20]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: write_data_reg[20]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  polar_decoder      tsmc13_wl10           slow
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  write_data_reg[20]/CK (DFFRX1)           0.00 #     0.00 r
+  write_data_reg[20]/QN (DFFRX1)           0.42       0.42 r
+  U23739/Y (OAI22X1)                       0.19       0.61 f
+  write_data_reg[20]/D (DFFRX1)            0.00       0.61 f
+  data arrival time                                   0.61
+
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  clock uncertainty                        0.10       0.10
+  write_data_reg[20]/CK (DFFRX1)           0.00       0.10 r
+  library hold time                       -0.05       0.05
+  data required time                                  0.05
+  -----------------------------------------------------------
+  data required time                                  0.05
+  data arrival time                                  -0.61
+  -----------------------------------------------------------
+  slack (MET)                                         0.56
+
+
+1

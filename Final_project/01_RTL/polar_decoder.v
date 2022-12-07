@@ -269,10 +269,10 @@ always @* begin
             end
         end
         else if (state == INTER_BUF) begin
-            if (N[7]) begin
+            if (N[7] == 1'b1) begin
                 stage_cnt_nxt = 6;
             end
-            else if (N[8]) begin
+            else if (N[8] == 1'b1) begin
                 stage_cnt_nxt = 7;
             end
             else begin
@@ -321,7 +321,7 @@ always @* begin
                 end
             end
             else begin
-                if (stage_cnt == 1 && stage_flag[8:0] == 9'b100001011) begin
+                if (stage_cnt == 0 && stage_flag[8:0] == 9'b100001011) begin
                     restart_flag_nxt = 1;
                 end
                 else if (stage_cnt == 1 && stage_flag[8:0] == 9'b100000010) begin
@@ -868,7 +868,7 @@ always @* begin
         end
         else if (stage_cnt == 5) begin
             for (i=0; i<16; i=i+1) begin
-                g_a[i] = stage_buf_6[{cnt[0],i[3:0]}];
+                g_a[i] = stage_buf_6[i[3:0]];
                 g_b[i] = stage_buf_6[{1'b1,1'b0,i[3:0]}];
                 g_u[i] = u_5[{~stage_flag[8:6],1'b0,{cnt[0],i[3:0]}}];
             end

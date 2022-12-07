@@ -1,6 +1,6 @@
 #@ # 
 #@ # Running dc_shell Version R-2020.09-SP5 for linux64 -- Apr 23, 2021
-#@ # Date:   Wed Dec  7 01:58:28 2022
+#@ # Date:   Thu Dec  8 00:05:09 2022
 #@ # Run by: b07901173@eda201
 #@ 
 
@@ -6811,8 +6811,8 @@ source /usr/cad/synopsys/synthesis/cur/admin/setup/.synopsys_dc.setup
 
 #@ # -- End source /usr/cad/synopsys/synthesis/cur/admin/setup/.synopsys_dc.setup
 
-source /home/b07901173/2022_CVSD/CVSD_Final_project/02_SYN/.synopsys_dc.setup
-#@ # -- Starting source /home/b07901173/2022_CVSD/CVSD_Final_project/02_SYN/.synopsys_dc.setup
+source /home/b07901173/2022_CVSD/Final_project/02_SYN/.synopsys_dc.setup
+#@ # -- Starting source /home/b07901173/2022_CVSD/Final_project/02_SYN/.synopsys_dc.setup
 
 #@ #
 #@ # 1. Modify this file to fit your own environment.
@@ -6849,10 +6849,10 @@ source /home/b07901173/2022_CVSD/CVSD_Final_project/02_SYN/.synopsys_dc.setup
 #@ define_name_rules name_rule -allowed {a-z A-Z 0-9 _[]} -max_length 255 -type net
 #@ define_name_rules name_rule -map {{"\\*cell\\*" "cell"}}
 #@ 
-#@ # -- End source /home/b07901173/2022_CVSD/CVSD_Final_project/02_SYN/.synopsys_dc.setup
+#@ # -- End source /home/b07901173/2022_CVSD/Final_project/02_SYN/.synopsys_dc.setup
 
-source -echo -verbose /home/b07901173/2022_CVSD/CVSD_Final_project/02_SYN/main.tcl
-#@ # -- Starting source /home/b07901173/2022_CVSD/CVSD_Final_project/02_SYN/main.tcl
+source -echo -verbose /home/b07901173/2022_CVSD/Final_project/02_SYN/main.tcl
+#@ # -- Starting source /home/b07901173/2022_CVSD/Final_project/02_SYN/main.tcl
 
 #@ set_host_options -max_cores 8
 #@ set hdlin_translate_off_skip_text "TRUE"
@@ -6891,6 +6891,7 @@ source -echo -verbose /home/b07901173/2022_CVSD/CVSD_Final_project/02_SYN/main.t
 #@ # =================================================== #
 #@ check_design
 #@ uniquify
+#@ set_max_area 0
 #@ set_fix_multiple_port_nets -all -buffer_constants  [get_designs *]
 #@ set_fix_hold [all_clocks]
 #@ 
@@ -6913,6 +6914,7 @@ source -echo -verbose /home/b07901173/2022_CVSD/CVSD_Final_project/02_SYN/main.t
 #@ write -format verilog -hierarchy -output Netlist/$DESIGN\_syn.v
 #@ write_sdf -version 2.1 -context verilog Netlist/$DESIGN\_syn.sdf
 #@ write_sdc Netlist/$DESIGN\_syn.sdc
-#@ # -- End source /home/b07901173/2022_CVSD/CVSD_Final_project/02_SYN/main.tcl
+#@ # -- End source /home/b07901173/2022_CVSD/Final_project/02_SYN/main.tcl
 
+report_timing
 exit
