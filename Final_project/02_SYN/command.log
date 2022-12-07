@@ -1,6 +1,6 @@
 #@ # 
 #@ # Running dc_shell Version R-2020.09-SP5 for linux64 -- Apr 23, 2021
-#@ # Date:   Thu Dec  8 00:05:09 2022
+#@ # Date:   Thu Dec  8 02:47:49 2022
 #@ # Run by: b07901173@eda201
 #@ 
 
@@ -6917,4 +6917,5 @@ source -echo -verbose /home/b07901173/2022_CVSD/Final_project/02_SYN/main.tcl
 #@ # -- End source /home/b07901173/2022_CVSD/Final_project/02_SYN/main.tcl
 
 report_timing
+report_area
 exit

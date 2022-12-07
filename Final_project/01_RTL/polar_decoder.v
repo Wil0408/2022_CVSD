@@ -22,9 +22,6 @@ parameter   IDLE = 0,
 	    LOAD_PACKET = 1,
 	    LOAD_INFO   = 2,
 	    LOAD_LLR    = 3,
-	    // N128_DECODE = 4,
-	    // N256_DECODE = 5,
-	    // N512_DECODE = 6,
 	    INTER_BUF   = 4,
 	    DECODE      = 5,
 	    FINISH      = 7;
@@ -46,11 +43,9 @@ wire            [20:0]  f_min[0:15];
 wire            [20:0]  f_min_inv[0:15];
 reg     signed  [21:0]  f_a[0:15], f_b[0:15];
 wire            [20:0]  f_a_abs[0:15], f_b_abs[0:15];
-// reg     signed  [21:0]  f_z[0:15];
 
 wire    signed  [21:0]  g_z_nxt[0:15];
 reg     signed  [21:0]  g_a[0:15], g_b[0:15];
-// reg     signed  [21:0]  g_z[0:15];
 reg                     g_u[0:15];
 
 integer i, j;
@@ -176,6 +171,10 @@ always @* begin
     // Stage flag
     // ========================================
 
+    wire    [8:0]    N_minus_K;
+
+    assign N_minus_K = N-K;
+
     always @* begin
         stage_flag_nxt = stage_flag;
 
@@ -194,6 +193,77 @@ always @* begin
             end
             else if (stage_cnt <= 4) begin
                 stage_flag_nxt[stage_cnt] = ~stage_flag[stage_cnt];
+            end
+        end
+        else if (state == INTER_BUF) begin
+            if (N[7] == 1'b1) begin
+                if (N_minus_K > 97) begin
+                    if (N_minus_K > 112) begin
+                        stage_flag_nxt = 7'b1100000;
+                    end
+                    else begin
+                        stage_flag_nxt = 7'b1000000;
+                    end
+                end
+                else begin
+                    if (N_minus_K > 72) begin
+                        stage_flag_nxt = 7'b0100000;
+                    end
+                end
+            end
+            else if (N[8] == 1'b1) begin
+                if (N_minus_K > 200) begin
+                    if (N_minus_K > 241) begin
+                        stage_flag_nxt = 8'b11100000;
+                    end
+                    else if (N_minus_K > 228) begin
+                        stage_flag_nxt = 8'b11000000;
+                    end
+                    else if (N_minus_K > 224) begin
+                        stage_flag_nxt = 8'b10100000;
+                    end
+                    else begin
+                        stage_flag_nxt = 8'b10000000;
+                    end
+                end
+                else begin
+                    if (N_minus_K > 193) begin
+                        stage_flag_nxt = 8'b01100000;
+                    end
+                    else if (N_minus_K > 192) begin
+                        stage_flag_nxt = 8'b01000000;
+                    end
+                    else if (N_minus_K > 130) begin
+                        stage_flag_nxt = 8'b00100000;
+                    end
+                end
+            end
+            else begin
+                if (N_minus_K > 416) begin
+                    if (N_minus_K > 488) begin
+                        stage_flag_nxt = 9'b111000000;
+                    end
+                    else if (N_minus_K > 480) begin
+                        stage_flag_nxt = 9'b110000000;
+                    end
+                    else if (N_minus_K > 449)begin
+                        stage_flag_nxt = 9'b100000000;
+                    end
+                    else begin
+                        stage_flag_nxt = 9'b100000000;
+                    end
+                end
+                else begin
+                    if (N_minus_K > 386) begin
+                        stage_flag_nxt = 9'b011000000;
+                    end
+                    else if (N_minus_K > 384) begin
+                        stage_flag_nxt = 9'b010000000;
+                    end
+                    else if (N_minus_K > 288) begin
+                        stage_flag_nxt = 9'b001000000;
+                    end
+                end
             end
         end
     end
@@ -358,22 +428,13 @@ always @* begin
             read_addr_nxt = 0;
         end
         LOAD_PACKET: begin
-            // read_addr_nxt = 1+(cur_packet<<5)+cur_packet;
             read_addr_nxt = 1;
         end
         LOAD_INFO: begin
             read_addr_nxt = read_addr+1;
         end
         LOAD_LLR: begin
-            if (N[7] == 1) begin
-                read_addr_nxt = read_addr+1;
-            end
-            else if (N[8] == 1) begin
-                read_addr_nxt = read_addr+1;
-            end
-            else begin
-                read_addr_nxt = read_addr+1;
-            end
+            read_addr_nxt = read_addr+1;
         end
         INTER_BUF: begin
             read_addr_nxt = read_addr+1;
@@ -945,6 +1006,11 @@ always @* begin
             if (state == DECODE) begin
                 if (stage_cnt == 0) begin
                     u[{~stage_flag[8:1],stage_flag[0]}] <= h;
+                end
+            end
+            else if (state == INTER_BUF) begin
+                for (i=0; i<512; i=i+1) begin
+                    u[i] <= 0;
                 end
             end
         end
