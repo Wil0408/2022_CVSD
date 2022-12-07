@@ -7,62 +7,62 @@ module polar_decoder (
     input   [191:0] rdata,
     output  [  5:0] waddr,
     output  [139:0] wdata
-);
-    // IO description
-    // input  wire         clk;
-    // input  wire         rst_n;
-    // input  wire         module_en;
-    // input  wire [191:0] rdata;
-    // output wire [ 10:0] raddr;
-    // output wire [  5:0] waddr;
-    // output wire [139:0] wdata;
-    // output wire         proc_done;
+    );
+// IO description
+// input  wire         clk;
+// input  wire         rst_n;
+// input  wire         module_en;
+// input  wire [191:0] rdata;
+// output wire [ 10:0] raddr;
+// output wire [  5:0] waddr;
+// output wire [139:0] wdata;
+// output wire         proc_done;
 
-    parameter   IDLE = 0,
-                LOAD_PACKET = 1,
-                LOAD_INFO   = 2,
-                LOAD_LLR    = 3,
-                // N128_DECODE = 4,
-                // N256_DECODE = 5,
-                // N512_DECODE = 6,
-                INTER_BUF   = 4,
-                DECODE      = 5,
-                FINISH      = 7;
+parameter   IDLE = 0,
+	    LOAD_PACKET = 1,
+	    LOAD_INFO   = 2,
+	    LOAD_LLR    = 3,
+	    // N128_DECODE = 4,
+	    // N256_DECODE = 5,
+	    // N512_DECODE = 6,
+	    INTER_BUF   = 4,
+	    DECODE      = 5,
+	    FINISH      = 7;
 
-    // global
-    reg     [4:0]   cnt, cnt_nxt;
-    reg     [3:0]   stage_cnt, stage_cnt_nxt;
-    reg     [6:0]   cur_packet, cur_packet_nxt;
-    reg     [8:0]   stage_flag, stage_flag_nxt;
+// global
+reg     [4:0]   cnt, cnt_nxt;
+reg     [3:0]   stage_cnt, stage_cnt_nxt;
+reg     [6:0]   cur_packet, cur_packet_nxt;
+reg     [8:0]   stage_flag, stage_flag_nxt;
 
-    // info
-    reg     [9:0]   N;  // u9.0
-    reg     [7:0]   K;  // u7.0
+// info
+reg     [9:0]   N;  // u9.0
+reg     [7:0]   K;  // u7.0
 
-    // computing
-    wire    signed  [21:0]  f_z_nxt[0:15];
-    wire                    f_msb[0:15];
-    wire            [20:0]  f_min[0:15];
-    wire            [20:0]  f_min_inv[0:15];
-    reg     signed  [21:0]  f_a[0:15], f_b[0:15];
-    wire            [20:0]  f_a_abs[0:15], f_b_abs[0:15];
-    // reg     signed  [21:0]  f_z[0:15];
+// computing
+wire    signed  [21:0]  f_z_nxt[0:15];
+wire                    f_msb[0:15];
+wire            [20:0]  f_min[0:15];
+wire            [20:0]  f_min_inv[0:15];
+reg     signed  [21:0]  f_a[0:15], f_b[0:15];
+wire            [20:0]  f_a_abs[0:15], f_b_abs[0:15];
+// reg     signed  [21:0]  f_z[0:15];
 
-    wire    signed  [21:0]  g_z_nxt[0:15];
-    reg     signed  [21:0]  g_a[0:15], g_b[0:15];
-    // reg     signed  [21:0]  g_z[0:15];
-    reg                     g_u[0:15];
+wire    signed  [21:0]  g_z_nxt[0:15];
+reg     signed  [21:0]  g_a[0:15], g_b[0:15];
+// reg     signed  [21:0]  g_z[0:15];
+reg                     g_u[0:15];
 
-    integer i, j;
-    
-    // ========================================
-    // FSM
-    // ========================================
+integer i, j;
 
-    reg     [2:0]   state, state_nxt;
-    reg     [6:0]   packet_num; // u6.0
+// ========================================
+// FSM
+// ========================================
 
-    always @* begin
+reg     [2:0]   state, state_nxt;
+reg     [6:0]   packet_num; // u6.0
+
+always @* begin
         cur_packet_nxt = cur_packet;
 
         case(state)
@@ -699,7 +699,7 @@ module polar_decoder (
                     end
                     for (i=2; i<3; i=i+1) begin
                         for (j=0; j<16; j=j+1) begin
-                            stage_buf_6[i<<4+j] <= stage_buf_6[((i+1)<<4)+j];
+                            stage_buf_6[(i<<4)+j] <= stage_buf_6[((i+1)<<4)+j];
                         end
                     end
 
@@ -869,7 +869,7 @@ module polar_decoder (
         else if (stage_cnt == 5) begin
             for (i=0; i<16; i=i+1) begin
                 g_a[i] = stage_buf_6[{cnt[0],i[3:0]}];
-                g_b[i] = stage_buf_6[{1'b1,cnt[0],i[3:0]}];
+                g_b[i] = stage_buf_6[{1'b1,1'b0,i[3:0]}];
                 g_u[i] = u_5[{~stage_flag[8:6],1'b0,{cnt[0],i[3:0]}}];
             end
         end
