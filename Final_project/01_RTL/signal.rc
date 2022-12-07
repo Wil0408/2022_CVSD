@@ -1,0 +1,96 @@
+Magic 271485
+Revision Verdi_P-2019.06
+
+; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
+viewPort 2 0 1470 869 205 65
+
+; File list:
+; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
+openDirFile -d / "" "/home/b07901173/2022_CVSD/Final_project/01_RTL/polar_decoder_BASE.fsdb"
+
+; file time scale:
+; fileTimeScale ### s|ms|us|ns|ps
+
+; signal spacing:
+signalSpacing 5
+
+; windowTimeUnit is used for zoom, cursor & marker
+; waveform viewport range
+zoom 134867.768733 155330.705184
+cursor 149000.000000
+marker 0.000000
+
+; user define markers
+; userMarker time_pos marker_name color linestyle
+; visible top row signal index
+top 0
+; marker line index
+markerPos 26
+
+; event list
+; addEvent event_name event_expression
+; curEvent event_name
+
+
+
+COMPLEX_EVENT_BEGIN
+
+
+COMPLEX_EVENT_END
+
+
+
+; toolbar current search type
+; curSTATUS search_type
+curSTATUS ByChange
+
+
+addGroup "G1"
+activeDirFile "" "/home/b07901173/2022_CVSD/Final_project/01_RTL/polar_decoder_BASE.fsdb"
+addSignal -h 15 /test/u_polar_decoder/clk
+addSignal -h 15 -holdScope rst_n
+addSignal -h 15 -holdScope module_en
+addSignal -h 15 -holdScope proc_done
+addSignal -h 15 -holdScope state[2:0]
+addGroup "G2"
+addSignal -h 15 -UNSIGNED -UDEC /test/u_polar_decoder/raddr[10:0]
+addSignal -h 15 -holdScope rdata[191:0]
+addGroup "G3"
+addSignal -h 15 -UNSIGNED -UDEC /test/u_polar_decoder/K[7:0]
+addSignal -h 15 -UNSIGNED -UDEC -holdScope N[9:0]
+addSignal -h 15 -UNSIGNED -UDEC -holdScope packet_num[6:0]
+addGroup "G4"
+addSignal -h 15 /test/u_polar_decoder/u[0:511]
+addSignal -h 15 -UNSIGNED -UDEC -holdScope write_addr[5:0]
+addSignal -h 15 -holdScope write_data[139:0]
+addGroup "G5"
+addSignal -h 15 /test/u_polar_decoder/u[0:511]
+addSignal -h 15 -holdScope stage_cnt[3:0]
+addSignal -h 15 -holdScope cnt[4:0]
+addSignal -h 15 -holdScope f_z_nxt[0:15]
+addSignal -h 15 -holdScope u_5[0:511]
+addSignal -h 15 -holdScope u_5[0:511]
+addSignal -h 15 -holdScope stage_buf_4[0:15]
+addSignal -h 15 -holdScope restart_flag_delay
+addSignal -h 15 -holdScope stage_buf_7[0:127]
+addGroup "G6"
+addGroup "G7"
+
+; getSignalForm Scope Hierarchy Status
+; active file of getSignalForm
+activeDirFile "" "/home/b07901173/2022_CVSD/Final_project/01_RTL/polar_decoder_BASE.fsdb"
+
+GETSIGNALFORM_SCOPE_HIERARCHY_BEGIN
+getSignalForm close
+
+"/test"
+"/test/u_polar_decoder"
+
+SCOPE_LIST_BEGIN
+"/test"
+"/test/u_polar_decoder"
+SCOPE_LIST_END
+
+GETSIGNALFORM_SCOPE_HIERARCHY_END
+
+
